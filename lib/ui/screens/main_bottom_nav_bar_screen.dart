@@ -6,6 +6,8 @@ import 'package:ui_design/ui/screens/new_task_screen.dart';
 import 'package:ui_design/ui/screens/progress_task_screen.dart';
 import 'package:ui_design/ui/utils/app_colors.dart';
 
+import '../widgets/task_manager_app_bar.dart';
+
 class MainBottomNavBarScreen extends StatefulWidget {
   const MainBottomNavBarScreen({super.key});
 
@@ -26,29 +28,7 @@ class _MainBottomNavBarScreenState extends State<MainBottomNavBarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.themeColor,
-
-        title: Row(
-          children: [
-            CircleAvatar(
-              radius: 16,
-              backgroundColor: Colors.white,
-            ),
-            const SizedBox(width: 16,),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Wali Ullah Ripon",style: TextStyle(fontSize: 16,color: Colors.white,fontWeight: FontWeight.bold),),
-                  Text("waliullah8328@gmai.com",style: TextStyle(fontSize: 12,color: Colors.white),),
-                ],
-              ),
-            ),
-            IconButton(onPressed: (){}, icon: Icon(Icons.logout)),
-          ],
-        ),
-      ),
+      appBar: const TaskManagerAppBar(),
       body: _screens[_selectedIndex],
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
@@ -67,3 +47,5 @@ class _MainBottomNavBarScreenState extends State<MainBottomNavBarScreen> {
     );
   }
 }
+
+
