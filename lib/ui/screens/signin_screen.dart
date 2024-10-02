@@ -1,5 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:ui_design/api/apiClient.dart';
 import 'package:ui_design/ui/screens/forgot_password_email_screen.dart';
 import 'package:ui_design/ui/screens/main_bottom_nav_bar_screen.dart';
 import 'package:ui_design/ui/screens/signup_screen.dart';
@@ -15,6 +18,55 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+
+  Map<String,String> formValues ={"email":"", "password":""};
+  bool isLoading = false;
+
+  inputOnChange(mapKey, textValue){
+    setState(() {
+      formValues.update(mapKey, (value) => textValue);
+    });
+
+  }
+
+  formOnSubmit()async{
+    if(formValues["email"]!.length == 0){
+      Get.snackbar("Email", "Email Required! ");
+
+    }
+    if(formValues["password"]!.length == 0){
+      Get.snackbar("Password", "Email Required! ");
+
+    }
+    else{
+      setState(() {
+        isLoading = true;
+      });
+
+      bool response = await loginRequest(formValues);
+      if(response == true){
+        setState(() {
+          isLoading = false;
+        });
+        // Navigate to dashboard screen
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainBottomNavBarScreen(),), (route) => false);
+      }
+      else{
+        setState(() {
+          isLoading = false;
+        });
+
+      }
+
+
+
+    }
+
+
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -69,6 +121,9 @@ class _SignInScreenState extends State<SignInScreen> {
         TextFormField(
           keyboardType: TextInputType.emailAddress,
           decoration: const InputDecoration(hintText: "Email"),
+          onChanged: (textValue){
+            inputOnChange("email", textValue);
+          },
         ),
         const SizedBox(
           height: 8,
@@ -76,13 +131,16 @@ class _SignInScreenState extends State<SignInScreen> {
         TextFormField(
           obscureText: true,
           decoration: const InputDecoration(hintText: "Password"),
+          onChanged: (textValue){
+            inputOnChange("password", textValue);
+          },
         ),
         const SizedBox(
           height: 24,
         ),
         ElevatedButton(
             onPressed: _onTapNextButton,
-            child: const Icon(Icons.arrow_circle_right_outlined)),
+            child: isLoading? const Center(child: CircularProgressIndicator()): const Icon(Icons.arrow_circle_right_outlined)),
       ],
     );
   }
@@ -107,7 +165,8 @@ class _SignInScreenState extends State<SignInScreen> {
 
   void _onTapNextButton() {
     // TODO: implement on tap next screen
-    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainBottomNavBarScreen(),), (route) => false);
+    formOnSubmit();
+   // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainBottomNavBarScreen(),), (route) => false);
 
   }
   void _onTapForgotPasswordButton() {

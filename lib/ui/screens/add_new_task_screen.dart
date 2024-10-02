@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 import '../widgets/task_manager_app_bar.dart';
 
 class AddNewTaskScreen extends StatefulWidget {
@@ -10,8 +11,11 @@ class AddNewTaskScreen extends StatefulWidget {
 }
 
 class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
+
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: const TaskManagerAppBar(),
       body: SingleChildScrollView(
@@ -22,6 +26,7 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 42,),
+
               Text("Add New Task",style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),),
               const SizedBox(height: 24,),
               TextFormField(

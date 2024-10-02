@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ui_design/ui/screens/profile_screen.dart';
 import 'package:ui_design/ui/screens/signin_screen.dart';
+import 'package:ui_design/ui/utils/utils.dart';
 
 import '../utils/app_colors.dart';
 
@@ -37,7 +38,11 @@ class TaskManagerAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ],
               ),
             ),
-            IconButton(onPressed: (){
+            IconButton(onPressed: () async {
+              bool response = await removeUserData();
+              if(response == true){
+                debugPrint("User data delete");
+              }
               Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const SignInScreen(),), (route) => false);
             }, icon: const Icon(Icons.logout)),
           ],
