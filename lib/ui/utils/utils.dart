@@ -35,3 +35,21 @@ Future<bool> removeUserData() async {
 
 
 }
+
+
+Future<void> writeEmailVerification(email)async{
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString("EmailVerification", email);
+
+
+
+}
+
+Future<void> writeOTPVerification(otp)async{
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString("OTPVerification", otp);
+
+
+
+}
+

@@ -55,6 +55,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
     return Column(
       children: [
         PinCodeTextField(
+
           length: 6,
           obscureText: false,
           animationType: AnimationType.fade,

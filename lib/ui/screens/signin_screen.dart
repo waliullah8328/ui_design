@@ -19,6 +19,7 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
 
+
   Map<String,String> formValues ={"email":"", "password":""};
   bool isLoading = false;
 
@@ -119,6 +120,7 @@ class _SignInScreenState extends State<SignInScreen> {
     return Column(
       children: [
         TextFormField(
+
           keyboardType: TextInputType.emailAddress,
           decoration: const InputDecoration(hintText: "Email"),
           onChanged: (textValue){
@@ -129,6 +131,7 @@ class _SignInScreenState extends State<SignInScreen> {
           height: 8,
         ),
         TextFormField(
+
           obscureText: true,
           decoration: const InputDecoration(hintText: "Password"),
           onChanged: (textValue){
