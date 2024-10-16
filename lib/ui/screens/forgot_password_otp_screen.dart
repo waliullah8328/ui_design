@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:ui_design/ui/screens/reset_password_screen.dart';
 import 'package:ui_design/ui/screens/signin_screen.dart';
+import 'package:ui_design/ui/utils/utils.dart';
 import 'package:ui_design/ui/widgets/screen_background.dart';
 
+import '../../api/apiClient.dart';
 import '../utils/app_colors.dart';
 
 class ForgotPasswordOtpScreen extends StatefulWidget {
@@ -15,6 +17,47 @@ class ForgotPasswordOtpScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
+
+  Map<String,String> formValues ={"otp":"",};
+  bool isLoading = false;
+
+  inputOnChange(mapKey, textValue){
+    setState(() {
+      formValues.update(mapKey, (value) => textValue);
+    });
+
+  }
+
+  formOnSubmit()async{
+
+
+    setState(() {
+      isLoading = true;
+    });
+    String? emailAddress = await readUserData("EmailVerification");
+    bool response = await verifyOTPRequest(emailAddress,formValues["otp"]);
+    if(response == true){
+      setState(() {
+        isLoading = false;
+      });
+      // Navigate to dashboard screen
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const ResetPasswordScreen(),));
+    }
+    else{
+      setState(() {
+        isLoading = false;
+      });
+
+    }
+
+
+
+
+
+
+  }
+  final _forgotOTPFormKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -55,6 +98,11 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
     return Column(
       children: [
         PinCodeTextField(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+
+          onChanged: (textValue){
+            inputOnChange("otp", textValue);
+          },
 
           length: 6,
           obscureText: false,
@@ -102,7 +150,9 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
   }
 
   void _onTapNextButton(){
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const ResetPasswordScreen(),));
+
+    formOnSubmit();
+
 
 
   }

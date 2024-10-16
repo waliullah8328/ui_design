@@ -17,7 +17,7 @@ class SplashScreen extends StatefulWidget {
  }
 
  class _SplashScreenState extends State<SplashScreen> {
-   String? token = "";
+
 
 
   @override
@@ -28,22 +28,32 @@ class SplashScreen extends StatefulWidget {
 
   }
 
-   Future<void> callData() async {
-      token = await readUserData("token");
-     if(token!.isNotEmpty){
-       Timer(Duration(seconds: 3), () {
-         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainBottomNavBarScreen(),));
-       });
+  Future<void> callData() async {
+    String? token = await readUserData("token");
 
+    // Check if the token is null or empty
+    if (token != null && token.isNotEmpty) {
+      Timer(const Duration(seconds: 3), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MainBottomNavBarScreen(),
+          ),
+        );
+      });
+    } else {
+      Timer(const Duration(seconds: 3), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const SignInScreen(),
+          ),
+        );
+      });
+    }
+  }
 
-     }else{
-       Timer(Duration(seconds: 3), () {
-         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SignInScreen(),));
-       });
-     }
-
-   }
-   @override
+  @override
    Widget build(BuildContext context) {
      return Scaffold(
        body: ScreenBackground(

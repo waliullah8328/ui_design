@@ -31,15 +31,8 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   formOnSubmit()async{
-    if(formValues["email"]!.length == 0){
-      Get.snackbar("Email", "Email Required! ");
 
-    }
-    if(formValues["password"]!.length == 0){
-      Get.snackbar("Password", "Email Required! ");
 
-    }
-    else{
       setState(() {
         isLoading = true;
       });
@@ -61,16 +54,18 @@ class _SignInScreenState extends State<SignInScreen> {
 
 
 
-    }
+
 
 
   }
+  final _loginFormKey = GlobalKey<FormState>();
 
 
 
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: ScreenBackground(
@@ -114,39 +109,65 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
       ),
     );
+
+
   }
-
   Widget _buildSignInForm() {
-    return Column(
-      children: [
-        TextFormField(
+    return Form(
+      key:_loginFormKey,
+      child: Column(
+        children: [
+          TextFormField(
 
-          keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(hintText: "Email"),
-          onChanged: (textValue){
-            inputOnChange("email", textValue);
-          },
-        ),
-        const SizedBox(
-          height: 8,
-        ),
-        TextFormField(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (value){
+              if(value!.isEmpty){
+                return "Email is required";
 
-          obscureText: true,
-          decoration: const InputDecoration(hintText: "Password"),
-          onChanged: (textValue){
-            inputOnChange("password", textValue);
-          },
-        ),
-        const SizedBox(
-          height: 24,
-        ),
-        ElevatedButton(
-            onPressed: _onTapNextButton,
-            child: isLoading? const Center(child: CircularProgressIndicator()): const Icon(Icons.arrow_circle_right_outlined)),
-      ],
+              }
+              return null;
+            },
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(hintText: "Email"),
+            onChanged: (textValue){
+              inputOnChange("email", textValue);
+            },
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          TextFormField(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (value){
+              if(value!.isEmpty){
+                return "Password is required";
+
+              }
+              if(value!.length <= 6){
+                return "Password should be 6 character";
+              }
+              return null;
+            },
+
+            obscureText: true,
+
+            decoration: const InputDecoration(hintText: "Password"),
+            onChanged: (textValue){
+              inputOnChange("password", textValue);
+            },
+          ),
+          const SizedBox(
+            height: 24,
+          ),
+          ElevatedButton(
+              onPressed: _onTapNextButton,
+              child: isLoading? const Center(child: CircularProgressIndicator()): const Icon(Icons.arrow_circle_right_outlined)),
+        ],
+      ),
     );
   }
+
+
   Widget _buildSignUpSection() {
     return RichText(
         text: TextSpan(
@@ -168,7 +189,12 @@ class _SignInScreenState extends State<SignInScreen> {
 
   void _onTapNextButton() {
     // TODO: implement on tap next screen
+    if(!_loginFormKey.currentState!.validate()){
+      return;
+
+    }
     formOnSubmit();
+
    // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainBottomNavBarScreen(),), (route) => false);
 
   }

@@ -4,6 +4,7 @@ import 'package:ui_design/ui/screens/forgot_password_otp_screen.dart';
 import 'package:ui_design/ui/screens/signin_screen.dart';
 import 'package:ui_design/ui/widgets/screen_background.dart';
 
+import '../../api/apiClient.dart';
 import '../utils/app_colors.dart';
 
 class ForgotPasswordEmailScreen extends StatefulWidget {
@@ -14,6 +15,46 @@ class ForgotPasswordEmailScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
+  Map<String,String> formValues ={"email":"",};
+  bool isLoading = false;
+
+  inputOnChange(mapKey, textValue){
+    setState(() {
+      formValues.update(mapKey, (value) => textValue);
+    });
+
+  }
+
+  formOnSubmit()async{
+
+
+    setState(() {
+      isLoading = true;
+    });
+
+    bool response = await verifyEmailRequest(formValues["email"]);
+    if(response == true){
+      setState(() {
+        isLoading = false;
+      });
+      // Navigate to dashboard screen
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const ForgotPasswordOtpScreen(),));
+    }
+    else{
+      setState(() {
+        isLoading = false;
+      });
+
+    }
+
+
+
+
+
+
+  }
+  final _forgotEmailFormKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -51,20 +92,34 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
 
 
   Widget _buildVerifyEmailForm() {
-    return Column(
-      children: [
-        TextFormField(
-          keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(hintText: "Email"),
-        ),
+    return Form(
+      key: _forgotEmailFormKey,
+      child: Column(
+        children: [
+          TextFormField(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (value){
+              if(value!.isEmpty){
+                return "Email is required";
+              }
+              return null;
+            },
+            onChanged: (textValue){
+              inputOnChange("email", textValue);
+            },
+            keyboardType: TextInputType.emailAddress,
 
-        const SizedBox(
-          height: 24,
-        ),
-        ElevatedButton(
-            onPressed:_onTapNextButton,
-            child: const Icon(Icons.arrow_circle_right_outlined)),
-      ],
+            decoration: const InputDecoration(hintText: "Email"),
+          ),
+
+          const SizedBox(
+            height: 24,
+          ),
+          ElevatedButton(
+              onPressed:_onTapNextButton,
+              child: const Icon(Icons.arrow_circle_right_outlined)),
+        ],
+      ),
     );
   }
   Widget _buildHaveAccountSection() {
@@ -89,7 +144,11 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
   }
   
   void _onTapNextButton(){
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const ForgotPasswordOtpScreen(),));
+    if(!_forgotEmailFormKey.currentState!.validate()){
+      return;
+    }
+
+    formOnSubmit();
     
   }
 }

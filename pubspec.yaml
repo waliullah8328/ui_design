@@ -16,15 +16,20 @@ dependencies:
 
 
   cupertino_icons: ^1.0.6
-  flutter_svg: ^2.0.10+1
+  flutter_svg: ^1.0.3
   pin_code_fields: ^8.0.1
   http: ^1.2.2
   get: ^4.6.6
   fluttertoast: ^8.2.8
   shared_preferences:
+  intl: ^0.17.0
 
 
 dev_dependencies:
+  flutter_app_name:
+
+flutter_app_name:
+  name: "TaskManagerApp"
   flutter_test:
     sdk: flutter
 

@@ -1,11 +1,10 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:ui_design/ui/screens/canceled_task_screen.dart';
 import 'package:ui_design/ui/screens/completed_task_screen.dart';
 import 'package:ui_design/ui/screens/new_task_screen.dart';
 import 'package:ui_design/ui/screens/progress_task_screen.dart';
-import 'package:ui_design/ui/utils/app_colors.dart';
-
+import 'package:ui_design/ui/utils/utils.dart';
 import '../widgets/task_manager_app_bar.dart';
 
 class MainBottomNavBarScreen extends StatefulWidget {
@@ -18,6 +17,25 @@ class MainBottomNavBarScreen extends StatefulWidget {
 class _MainBottomNavBarScreenState extends State<MainBottomNavBarScreen> {
   int _selectedIndex = 0; // Move it here, so it's part of the widget's state
 
+  Map<String,String> profileData= {"email":"","firstName":"","lastName":"",};
+
+  readAppBarData() async {
+    String? email = await readUserData("email");
+    String? firstName = await readUserData("firstName");
+    String? lastName = await readUserData("lastName");
+    setState(() {
+      profileData= {"email":"$email","firstName":"$firstName","lastName":"$lastName",};
+
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    readAppBarData();
+    super.initState();
+  }
+
   static const List<Widget> _screens = [
     NewTaskScreen(),
     CompletedTaskScreen(),
@@ -28,7 +46,7 @@ class _MainBottomNavBarScreenState extends State<MainBottomNavBarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const TaskManagerAppBar(),
+      appBar: TaskManagerAppBar( profileData: profileData,),
       body: _screens[_selectedIndex],
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,

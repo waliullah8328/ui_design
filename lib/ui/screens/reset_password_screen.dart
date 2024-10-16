@@ -2,8 +2,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:ui_design/ui/screens/forgot_password_otp_screen.dart';
 import 'package:ui_design/ui/screens/signin_screen.dart';
+import 'package:ui_design/ui/utils/utils.dart';
 import 'package:ui_design/ui/widgets/screen_background.dart';
 
+import '../../api/apiClient.dart';
 import '../utils/app_colors.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
@@ -14,6 +16,53 @@ class ResetPasswordScreen extends StatefulWidget {
 }
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
+  Map<String,String> formValues ={"email":"", "OTP": "", "password":""};
+  bool isLoading = false;
+
+  inputOnChange(mapKey, textValue){
+    setState(() {
+      formValues.update(mapKey, (value) => textValue);
+    });
+
+  }
+
+  formOnSubmit() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    bool response = await setPasswordRequest(formValues);
+
+    // Check if the widget is still mounted before calling setState
+    if (!mounted) return;
+
+    if (response == true) {
+      setState(() {
+        isLoading = false;
+      });
+      // Navigate to the sign-in screen
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const SignInScreen()),
+            (route) => false,
+      );
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  final _resetPasswordFormKey = GlobalKey<FormState>();
+
+  callStoreData() async {
+    String? OTP = await  readUserData("OTPVerification");
+    String? email = await  readUserData("EmailVerification");
+
+    inputOnChange("OTP",OTP);
+    inputOnChange("email",email);
+  }
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -51,27 +100,64 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
 
   Widget _buildResetPasswordForm() {
-    return Column(
-      children: [
-        TextFormField(
-          keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(hintText: "Password"),
-        ),
-        const SizedBox(
-          height: 8,
-        ),
-        TextFormField(
-          keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(hintText: "Confirm Password"),
-        ),
+    return Form(
+      key: _resetPasswordFormKey,
+      child: Column(
+        children: [
+          TextFormField(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (value){
+              if(value!.isEmpty){
+                return "Password is required";
 
-        const SizedBox(
-          height: 24,
-        ),
-        ElevatedButton(
-            onPressed:_onTapNextButton,
-            child: const Icon(Icons.arrow_circle_right_outlined)),
-      ],
+              }
+              if(value!.length <= 6){
+                return "Password should be 6 character";
+              }
+              return null;
+            },
+
+
+            onChanged: (textValue){
+              inputOnChange("password", textValue);
+            },
+
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(hintText: "Password"),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          TextFormField(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (value){
+              if(value!.isEmpty){
+                return "Password is required";
+
+              }
+              if(value!.length <= 6){
+                return "Password should be 6 character";
+              }
+              return null;
+            },
+
+
+            onChanged: (textValue){
+              inputOnChange("password", textValue);
+            },
+
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(hintText: "Confirm Password"),
+          ),
+
+          const SizedBox(
+            height: 24,
+          ),
+          ElevatedButton(
+              onPressed:_onTapNextButton,
+              child: const Icon(Icons.arrow_circle_right_outlined)),
+        ],
+      ),
     );
   }
   Widget _buildHaveAccountSection() {
@@ -96,6 +182,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 
   void _onTapNextButton(){
+    if(!_resetPasswordFormKey.currentState!.validate()){
+      return;
+    }
+    formOnSubmit();
+
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const SignInScreen(),), (route) => false);
 
   }

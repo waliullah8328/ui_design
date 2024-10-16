@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../utils/app_colors.dart';
 
 class TaskCard extends StatefulWidget {
-  const TaskCard({
+  const TaskCard(taskItem, {
     super.key,
   });
 
